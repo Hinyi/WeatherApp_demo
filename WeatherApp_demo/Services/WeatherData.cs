@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using WeatherApp_demo.Exceptions;
 using WeatherApp_demo.Interface;
 using WeatherApp_demo.Models;
 
@@ -38,6 +39,7 @@ namespace WeatherApp_demo.Services
                        HttpCompletionOption.ResponseHeadersRead))
             {
                 response.EnsureSuccessStatusCode();
+                if (response is null) throw new NotFoundException("Station not found");
                 var stream = await response.Content.ReadAsStreamAsync();
                 var latestData = await JsonSerializer.DeserializeAsync<WeatherDataDto>(stream);
                 return latestData;

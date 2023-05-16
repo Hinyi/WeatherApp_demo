@@ -1,3 +1,5 @@
+using NLog;
+using NLog.Web;
 using WeatherApp_demo.Interface;
 using WeatherApp_demo.Services;
 
@@ -9,6 +11,10 @@ namespace WeatherApp_demo
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            //logger
+            var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+            logger.Debug("init main");
+
             // Add services to the container.
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IWeatherData, WeatherData>();
@@ -18,6 +24,8 @@ namespace WeatherApp_demo
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Logging.ClearProviders();
+            builder.Host.UseNLog();
 
             var app = builder.Build();
 
