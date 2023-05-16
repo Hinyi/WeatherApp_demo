@@ -23,7 +23,8 @@ namespace WeatherApp_demo.Services
             using (var response = await httpClient.GetAsync($"https://danepubliczne.imgw.pl/api/data/synop/id/{id}",
                        HttpCompletionOption.ResponseHeadersRead))
             {
-                response.EnsureSuccessStatusCode();
+                //response.EnsureSuccessStatusCode();
+                if (response.IsSuccessStatusCode == false) throw new NotFoundException("Station not found");
                 var stream = await response.Content.ReadAsStringAsync();
                 var latestData = JsonSerializer.Deserialize<WeatherDataDto>(stream);
                 return latestData;

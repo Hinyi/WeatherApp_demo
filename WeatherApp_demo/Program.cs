@@ -1,6 +1,7 @@
 using NLog;
 using NLog.Web;
 using WeatherApp_demo.Interface;
+using WeatherApp_demo.Middleware;
 using WeatherApp_demo.Services;
 
 namespace WeatherApp_demo
@@ -17,6 +18,7 @@ namespace WeatherApp_demo
 
             // Add services to the container.
             builder.Services.AddHttpClient();
+            builder.Services.AddScoped<ErrorHandlingMiddleware>();
             builder.Services.AddScoped<IWeatherData, WeatherData>();
 
             builder.Services.AddControllers();
@@ -25,6 +27,7 @@ namespace WeatherApp_demo
             builder.Services.AddSwaggerGen();
 
             builder.Logging.ClearProviders();
+            builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
             builder.Host.UseNLog();
 
             var app = builder.Build();
@@ -36,6 +39,7 @@ namespace WeatherApp_demo
                 app.UseSwaggerUI();
             }
 
+            app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
